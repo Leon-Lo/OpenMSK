@@ -320,7 +320,7 @@ def _fit_nsm_subprocess(mesh_paths, save_dir, config_path, bone_only=False, calc
         sys.executable, "-c",
         f"""
 import sys, json, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath('{__file__}'))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath({__file__!r}))))
 from steps.run_nsm import fit_nsm
 from steps._common import load_config
 
