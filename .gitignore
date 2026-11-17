@@ -22,3 +22,4 @@ test_commands.txt
 analysis/
 data/
 results/
+local_settings.py
