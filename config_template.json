@@ -2,6 +2,7 @@
     "perform_bone_only_nsm": true,
     "perform_bone_and_cart_nsm": false,
     "clip_femur_top": true,
+    "export_comak_tibia_cartilage": false,
     "default_seg_model": "nnunet_knee",
     "batch_size": 32,
     "models": {
