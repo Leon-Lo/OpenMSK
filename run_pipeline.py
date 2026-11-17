@@ -139,6 +139,13 @@ def run_all(working_dir, model_name=None, config=None, config_path=None):
     from steps.generate_meshes import run as generate_meshes
     generate_meshes(working_dir, config=config)
 
+    # Optional: one merged tibial cartilage contact mesh for COMAK. Off by
+    # default; a post-processing export, not a step, so the website never runs it.
+    if config.get("export_comak_tibia_cartilage"):
+        from export_comak import merge_tibia_cartilage
+        out = merge_tibia_cartilage(working_dir)
+        print(f"COMAK tibial cartilage mesh written to {out}")
+
     # Step 5: T2 mapping (only for qDESS input)
     if seg_result["is_qdess"]:
         from steps.t2_mapping import run as t2_mapping
@@ -199,6 +206,9 @@ if __name__ == "__main__":
     parser.add_argument("model_name", nargs="?", default=None,
                         help="Segmentation model name (default: from config)")
     parser.add_argument("--config", default=None, help="Path to config.json")
+    parser.add_argument("--comak", action="store_true",
+                        help="Also write tibia_cartilage.stl (medial + lateral merged, in m) "
+                             "for COMAK. Same as export_comak_tibia_cartilage in config.")
     args = parser.parse_args()
 
     config_path = args.config or os.environ.get(
@@ -206,6 +216,8 @@ if __name__ == "__main__":
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json"),
     )
     config = load_config(config_path)
+    if args.comak:
+        config["export_comak_tibia_cartilage"] = True
 
     # Create output directory
     os.makedirs(args.path_save, exist_ok=True)

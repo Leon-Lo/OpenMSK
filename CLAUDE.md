@@ -263,6 +263,7 @@ its `TestLabelMapIntegrity` is what notices if the two repos drift apart.
 
 - **`utils.py`** — `clip_femur_top()` utility. Used by `steps/run_nsm.py`.
 - **`download_nsm_models.py`** — Downloads NSM models from HuggingFace.
+- **`export_comak.py`** — Post-processing for COMAK, not a pipeline step: merges `tibia_cart_0_mesh.vtk` + `tibia_cart_1_mesh.vtk` (medial + lateral) into one contact mesh, scaled mm → m by default. Kept out of `steps/` so the website's outputs do not change.
 - **`config.json`** / **`config_template.json`** — Pipeline configuration.
 
 ### Test Files
@@ -277,6 +278,7 @@ its `TestLabelMapIntegrity` is what notices if the two repos drift apart.
 - **`config.json`** — Active configuration (not committed to git, derived from template). Contains:
   - `perform_bone_only_nsm` / `perform_bone_and_cart_nsm` — Flags to enable/disable NSM steps
   - `clip_femur_top` — Whether to clip superior femur before NSM
+  - `export_comak_tibia_cartilage` — Default `false`. When true, `run_pipeline.py` calls `export_comak.merge_tibia_cartilage()` after `generate_meshes` and writes `tibia_cartilage.stl` (in m). `--comak` on the CLI sets it too. Only `run_pipeline.py` reads it; the website orchestrator does not
   - `default_seg_model` — Default segmentation model name
   - `batch_size` — Inference batch size
   - `models` — Paths to DOSMA `.h5` weight files
@@ -316,6 +318,7 @@ TensorFlow 2.11 and PyTorch coexist but have conflicting CUDA requirements. TF n
 # Whole pipeline
 python run_pipeline.py /path/to/image /path/to/output/ [model_name]
 python run_pipeline.py /path/to/image /path/to/output/ --config /path/to/config.json
+python run_pipeline.py /path/to/image /path/to/output/ --comak   # + merged tibial cartilage STL for COMAK
 
 # Individual steps
 python -m steps.segment /path/to/working_dir --options '{"model": "nnunet_knee"}' --config config.json
